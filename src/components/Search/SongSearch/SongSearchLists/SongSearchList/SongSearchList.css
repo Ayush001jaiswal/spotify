@@ -1,0 +1,18 @@
+*{
+	box-sizing: border-box;
+}
+
+.songSearchList {
+  float: left;
+  width: 25%;
+  padding: 20px;
+}
+
+.songSearchList Button {
+	margin: 10px;
+}
+
+img {
+	width: 80%;
+}
+

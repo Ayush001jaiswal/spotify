@@ -1,0 +1,37 @@
+.login Form {
+	text-align: center;
+}
+
+/*.login Input[type='email'] {
+	width: 300px;
+	margin-left: 500px;
+}
+*/
+/*.login Input[type='password'] {
+	width: 300px;
+	margin-left: 500px;
+}
+*/
+.fb-icon {
+    margin-top: 20px;
+    font-size: 20px;
+    font-style: bold; 
+
+}
+
+.resetLink {
+	padding: 10px;
+}
+
+.resetLink a, a:focus, a:hover {
+	text-decoration: none !important;
+}
+
+.reset-horizontal {
+	width: 40%;
+}
+
+.signupLink {
+	margin: 20px;
+}
+

@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
+.favouriteList {
+  float: left;
+  width: 25%;
+  padding: 20px;
+}
+
+.favouriteList Button {
+	margin: 10px;
+}
+
+img {
+	width: 90%;
+}
