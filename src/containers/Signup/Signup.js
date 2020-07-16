@@ -22,7 +22,8 @@ class Signup extends Component {
 		this.state = {
 			userInfo: [],
 			isRegister: false,
-			error: false
+			validateError: {email:'', cemail:'', password: '', profile: '', year: '', month: '', day: '', gender: '', robot: ''},
+			formError: false
 		}
 	}
 
@@ -38,21 +39,47 @@ class Signup extends Component {
 			shareregdata: this.shareregdata.current.value,
 			isRobot: this.isRobot.current.value
 		}
-		//console.log('dd', userData);
-		
-		if (this.username.current.value === this.cnfusername.current.value) {
-			const updatedUserInfo = [ ...this.state.userInfo]; 
-			updatedUserInfo.push(userData);
 
-			this.setState({userInfo: updatedUserInfo, isRegister: true});
-			this.props.sendUserDataToHome(userData);
-		} else {
-			this.setState({error: true});
-		}
+		//if(!this.state.formError) {
+			if (this.username.current.value === this.cnfusername.current.value) {
+				const updatedUserInfo = [ ...this.state.userInfo]; 
+				updatedUserInfo.push(userData);
+				this.setState({userInfo: updatedUserInfo, isRegister: true});
+				//this.props.sendUserDataToHome(updatedUserInfo);
+				this.props.sendUserDataToHome(userData);
+			} 
+		//}
+		// else {
+		// 	this.setState({error: true});
+		// }
 	}
+
+	validateEmail = (e) => {
+		// let emailMessage = '';
+		// const {name, value} = e.target;
+		// var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		// if(value === '') {
+		// 	emailMessage = 'You need to enter your email.'; 
+		// } elseif (value.match(mailformat) == false) {
+		// 	emailMessage = 'This email is invalid. Make sure it's written like example@email.com';
+		// }
+		// validateError.email = emailMessage;
+		// this.setState({validateError: this.state.validateError})
+	}
+
+	// validateHandle = e => {
+	// 	const {name, value} = e.target;
+	// 	const updateValidateError = { ...this.state.validateError }
+	// 	//var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	// 	if(value == '')	{
+	// 		this.setState({updateValidateError, [name]: value, formError: true}); 
+	// 	}
+	// }
 	
 
   	render() {
+  		console.log('emailV', this.state.validateError)
+  		console.log('formerror', this.state.formError)
   		return (
 	  		<div className="Signup">
 	  			<Form>
@@ -67,7 +94,8 @@ class Signup extends Component {
 							    <Col><Label>What's your email?</Label></Col>
 							</Row>
 							<Row>
-								<Col><input input type="email" ref={this.username} placeholder="Enter your email." /></Col>
+								<Col><input name="email" onChange={this.validateEmail} type="email" ref={this.username} placeholder="Enter your email." /></Col>
+								<p>{this.state.validateError.email}</p>
 							</Row>
 						</FormGroup>	
 						
@@ -76,7 +104,7 @@ class Signup extends Component {
 								<Col><Label>Confirm your email?</Label></Col>
 							</Row>
 							<Row>
-								<Col><input type="email" ref={this.cnfusername} placeholder="Enter your email again." /></Col>
+								<Col><input onChange={this.validateEmail} type="email" name="cmail" ref={this.cnfusername} placeholder="Enter your email again." /></Col>
 		                	</Row>
 		                </FormGroup>
 						
@@ -86,7 +114,7 @@ class Signup extends Component {
 							</Row>
 							
 							<Row>
-								<Col><input type="password" ref={this.password} placeholder="Create a password." /></Col>
+								<Col><input type="password" name="password" ref={this.password} placeholder="Create a password." /></Col>
 							</Row>
 						</FormGroup>		
 						
@@ -95,7 +123,7 @@ class Signup extends Component {
 								<Col><Label>What should we call you?</Label></Col>
 							</Row>	
 							<Row>	
-								<Col><input type="text" ref={this.profilename} placeholder="Enter a profile name." /></Col>
+								<Col><input type="text" name="profile" ref={this.profilename} placeholder="Enter a profile name." /></Col>
 							</Row>
 							<Row>	 
 								<Col><FormText>This appears on your profile.</FormText></Col>
@@ -110,9 +138,9 @@ class Signup extends Component {
 									<Col>Day</Col>
 	 							</Row>
 								<Row>	
-									<Col><input type="text" ref={this.year} placeholder="YYYY" /></Col>
+									<Col><input name="year" type="text" ref={this.year} placeholder="YYYY" /></Col>
 									<Col>
-										<select ref={this.month} custom>
+										<select name="month" ref={this.month} custom>
 											<option value="january">January</option>
 											<option value="febuary">Febuary</option>
 											<option value="march">March</option>
@@ -127,7 +155,7 @@ class Signup extends Component {
 											<option value="december">December</option>
 										</select>
 									</Col>
-									<Col><input type="text" ref={this.day} placeholder="DD" /></Col>
+									<Col><input name="day" type="text" ref={this.day} placeholder="DD" /></Col>
 	 							</Row>
 	 							</FormGroup>
 	 							
@@ -136,9 +164,9 @@ class Signup extends Component {
 	 									<Col><label>What's your gender?</label></Col>
 	 								 </Row>
 	 								<Row>
-	 									<Col><input type="radio" ref={this.gender} value="male" /> Male</Col>
-	 									<Col><input type="radio" ref={this.gender} value="female" /> Female</Col>
-	 									<Col><input type="radio" ref={this.gender} value="non-binary" /> Non-binary</Col>
+	 									<Col><input name="gender" type="radio" ref={this.gender} value="male" /> Male</Col>
+	 									<Col><input name="gender" type="radio" ref={this.gender} value="female" /> Female</Col>
+	 									<Col><input name="gender" type="radio" ref={this.gender} value="non-binary" /> Non-binary</Col>
 	 								</Row>
 	 							</FormGroup>
 	 							
@@ -149,7 +177,7 @@ class Signup extends Component {
 	 							</FormGroup>
 	 							
 	 							<FormGroup>
-	 								<input type="checkbox" ref={this.isRobot} />
+	 								<input name="robot" type="checkbox" ref={this.isRobot} />
 	 								&nbsp;I'm not a robot.
 	 							</FormGroup>
 		 							

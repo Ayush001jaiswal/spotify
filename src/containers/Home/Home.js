@@ -8,13 +8,14 @@ import FavouriteLists from '../../components/FavouriteLists/FavouriteLists';
 import Signup from '../Signup/Signup';
 import Login from '../../components/Login/Login';
 import ResetPassword from '../../components/ResetPassword/ResetPassword';
+import { Overlay, Tooltip, Button } from 'react-bootstrap';
 
 class Home extends Component {
 
 	constructor(props) {
 		super(props);
 		this.searchInput = React.createRef();
-
+		this.target = React.createRef();
 		this.state = {
 			searchResults: [],
 			succees: false,
@@ -24,14 +25,28 @@ class Home extends Component {
 			usersData: [],
 			isPlay: false,
 			authuser:'',
-			authFlag: false
+			authFlag: false,
+			isLogout: false,
+			show: false,
+			accountSpecific:[] 
 		};
 	}
 
-	sendUserDataToHome = (obj) => {
+	sendUserDataToHome = (userArr) => {
+      const userName = userArr.username;
+      //alert(userName)
+      // const specificUserName = {
+      // 	username:userName
+      // }
+      
+      const newAccountSpecific = [ ...this.state.accountSpecific ] 
       const newUserData = [ ...this.state.usersData ];
-      newUserData.push(obj);
-      this.setState({userData: newUserData});
+      newAccountSpecific.push(userName);
+       // userArr.map((value, key) => {
+       // 	  newUserData.push(value);	
+       // });
+      newUserData.push(userArr);
+      this.setState({usersData: newUserData, accountSpecific: newAccountSpecific});
 	}
 
 	playSongHandler = (song) => {
@@ -51,7 +66,6 @@ class Home extends Component {
 			setTimeout(() => {
     			this.setState({authFlag: false});	
   			}, 5000)
-			
 		}
 	}
 
@@ -68,8 +82,23 @@ class Home extends Component {
 
 	addToFavouriteList = (favSong) => {
 		const favouriteList  = [ ...this.state.favouriteList ];
+		//const updateAccountSpecific  = [ ...this.state.accountSpecific ];
 		if(this.state.authuser) {
 			if(favouriteList.indexOf(favSong) === -1) {
+				// updateAccountSpecific.map((value, key) => { console.log('val', value) 
+				// 		if(value == localStorage.getItem("token")) {
+				// 			 const favSongDetails = [
+				// 			 	...favSong
+				// 			 ]
+				// 			 value.push(favSong)
+				// 			// newValue = { ...value, favSong }
+				// 			// console.log('newValue', newValue)
+				// 			// updateAccountSpecific[key] = newValue;
+				// 			// console.log('newV', updateAccountSpecific)
+				// 			this.setState({accountSpecific: updateAccountSpecific}); 
+				// 		}  		
+				// });
+
 				favouriteList.push(favSong);
 				this.setState({favouriteList: favouriteList});
 			}
@@ -88,29 +117,49 @@ class Home extends Component {
 		this.setState({favouriteList: newFavourateList});	
 	}
 
-	sendUsernameToHome = (user) => {
-		this.setState({authuser:user});;
+	logOut = () => {
+		localStorage.removeItem("token");
+    	this.setState({
+      		isLogout: true,
+      		authuser: ''
+    	});
 	}
-		
+
+	sendUsernameToHome = () => {
+		const authToken = localStorage.getItem("token")
+		this.setState({authuser:authToken, isLogout: false});
+	}
+
   	render() {
-  		console.log('authuser', this.state.authuser);
+  		console.log('accountSpecific', this.state.accountSpecific)
+
+  		// console.log('show', this.state.show)
+	   //  console.log('target', this.target.current)
+  		// console.log('logout', this.state.isLogout)
   		return (
 	  		<div className="Home">
 	  			<div className="Navbar">
 					<Link className="active" to="/">Home</Link>
+					{this.state.authuser ?
 					<Link className="active" to="/favourite">Favourite List</Link>
+					:  <Link ref={this.target} className="active" onClick={ () => this.setState({show: true})}  to="/favourite">Favourite List</Link> }
+					
 					<Route path="/" exact>
 						<SongSearch 
 							searchInput={this.searchInput} 
-							songSearchHandler={this.songSearchHandler} 
+							songSearchHandler={this.songSearchHandler}
 						/>
 					</Route>
+					{this.state.isLogout === true ? 
+						<Redirect  to="/login" /> : ''
+					}				
+
 					{this.state.authuser ?
-					'' :
-					<>
-					<Link className="active" to="/signup">SIGN UP</Link>
-					<Link className="active" to="/login">LOG IN</Link> 
-					</>
+						<Link onClick={this.logOut} to="#">Log Out </Link> :
+						<>
+							<Link className="active" to="/signup">SIGN UP</Link>
+							<Link className="active" to="/login">LOG IN</Link> 
+						</>
 					}
 				</div>
 
@@ -143,7 +192,9 @@ class Home extends Component {
 						<FavouriteLists 
 							removeFavouriteSong = {this.removeFavouriteSong} 
 							playSong = {this.playSongHandler} 
-							myFavouriteList = {this.state.favouriteList}  
+							myFavouriteList = {this.state.favouriteList} 
+							//accountSpecific = {this.state.accountSpecific}
+							//authuser = {localStorage.getItem("token")} 
 						/>
 					</Route>
 				: ''}
@@ -154,14 +205,29 @@ class Home extends Component {
 
 				<Route path="/login">
 					<Login
-					sendUsernameToHome={this.sendUsernameToHome} 
-					userData = {this.state.userData } />
+					sendUsernameToHome = {this.sendUsernameToHome}  
+					userData = {this.state.usersData } />
 				</Route>
 
 				<Route path="/reset-password">
 					<ResetPassword />
-				</Route>				
-				
+				</Route>
+
+				<Overlay target={this.target.current} show={this.state.show} placement="right">
+			        {(props) => (
+			          <Tooltip id="overlay-example" {...props}>
+			            <h6>Add to Favarate List</h6>
+			            <p>Please First Login and then add to the List</p>	
+			            <div className="d-flex justify-content-end">
+	  						<Button onClick={() => this.setState({show: false})}  variant="outline-success" className="active"><Link to="/login">LOG IN</Link></Button>
+	  						&nbsp;
+	  						<Button onClick={() => this.setState({show: false})} variant="outline-success">
+	    						Not NOW
+	  						</Button>
+						</div>
+			          </Tooltip>
+			        )}
+				</Overlay>
 	  		</div>
 	  	);	
   	}

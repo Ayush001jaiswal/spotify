@@ -11,7 +11,7 @@ const songSearchLists = props => {
 				playSong = { props.playSong.bind(this, items) } 
 				addToFavouriteList = { props.addToFavouriteList.bind(this, items) }
 				key={key} 
-				SongSearchList={items} 
+				SongSearchList={items}
 			/>
 		);
 	});

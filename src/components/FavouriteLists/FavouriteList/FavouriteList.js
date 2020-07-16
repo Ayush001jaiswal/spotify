@@ -5,6 +5,7 @@ import './FavouriteList.css';
 const favouriteList = props => {
 	
 	const imageUrl = props.sendFavouriteList.artworkUrl100;
+	//console.log(props.sendFavouriteList);
 	return (
 		<div className="favouriteList">
 			<Container>
